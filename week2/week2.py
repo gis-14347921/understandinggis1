@@ -70,3 +70,34 @@ GeoSeries(border).plot(
 
 # save the image
 savefig('C:/Users/14256/Documents/GitHub/understandinggis1/week2/out/first-border.png')
+
+from pyproj import Geod
+
+# set which ellipsoid you would like to use
+g = Geod(ellps='WGS84')
+
+print(border)
+
+# loop through each segment in the line and print the coordinates
+for segment in border.geoms:
+	print(f"from:{segment.coords[0]}\tto:{segment.coords[1]}")
+    
+# initialise a variable to hold the cumulative length
+cumulative_length = 0
+
+# loop through each segment in the line
+for segment in border.geoms:
+    # 提取起点和终点的坐标
+    start_lon, start_lat = segment.coords[0]  # 起点坐标
+    end_lon, end_lat = segment.coords[1]      # 终点坐标
+    
+    # 计算两点之间的椭球距离（只获取距离值，索引为2）
+    distance = g.inv(start_lon, start_lat, end_lon, end_lat)[2]
+
+
+	# add the distance to our cumulative total
+    cumulative_length += distance
+    
+    print(distance)
+    
+   
