@@ -87,17 +87,17 @@ cumulative_length = 0
 
 # loop through each segment in the line
 for segment in border.geoms:
-    # 提取起点和终点的坐标
-    start_lon, start_lat = segment.coords[0]  # 起点坐标
-    end_lon, end_lat = segment.coords[1]      # 终点坐标
+    # Extract coordinates of start and end points
+    start_lon, start_lat = segment.coords[0]  # Start point coordinates
+    end_lon, end_lat = segment.coords[1]      # End point coordinates
     
-    # 计算两点之间的椭球距离（只获取距离值，索引为2）
+    # Calculate the ellipsoidal distance between two points (get only the distance value, index 2)
     distance = g.inv(start_lon, start_lat, end_lon, end_lat)[2]
 
 
 	# add the distance to our cumulative total
     cumulative_length += distance
     
-    print(distance)
-    
+    print(cumulative_length)
    
+    
