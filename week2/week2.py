@@ -36,3 +36,37 @@ print(type(usa_col))
 usa_geom = usa_col.iloc[0]
 
 print(type(usa_geom))
+
+# extract the country rows as a GeoDataFrame object with 1 row
+mex = world.loc[(world.ISO_A3 == 'MEX')]
+
+print(type(mex))
+
+# extract the geometry columns as a GeoSeries object
+mex_col = mex.geometry
+
+print(type(mex_col))
+
+# extract the geometry objects themselves from the GeoSeries
+mex_geom = mex_col.iloc[0]
+
+print(type(mex_geom))
+
+# calculate the intersection of the geometry objects
+border = usa_geom.intersection(mex_geom)
+
+from matplotlib.pyplot import subplots, savefig, title
+
+# create map axis object
+my_fig, my_ax = subplots(1, 1, figsize=(16, 10))
+
+# remove axes
+my_ax.axis('off')
+
+# plot the border
+GeoSeries(border).plot(
+  ax = my_ax
+	)
+
+# save the image
+savefig('C:/Users/14256/Documents/GitHub/understandinggis1/week2/out/first-border.png')
