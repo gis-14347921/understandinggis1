@@ -76,7 +76,7 @@ from pyproj import Geod
 # set which ellipsoid you would like to use
 g = Geod(ellps='WGS84')
 
-#print(border)
+print(border)
 
 # loop through each segment in the line and print the coordinates
 for segment in border.geoms:
@@ -101,11 +101,7 @@ for segment in border.geoms:
     #print(cumulative_length)
    
 # open the graticule dataset
-graticule = read_file("C:/Users/14256/Documents/GitHub/data/natural-earth/ne_110m_graticules_5.shp")
-
-# define lambert_conic
-lambert_conic = '+proj=lcc +lat_0=30 +lat_1=30 +lon_0=-100 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
-
+graticule = read_file(r"C:/Users/14256/Documents/GitHub/data/natural-earth\ne_110m_graticules_5.shp")
 # create map axis object
 my_fig, my_ax = subplots(1, 1, figsize=(16, 10))
 
@@ -114,6 +110,8 @@ my_ax.axis('off')
 
 # set title
 title(f"Trump's wall would have been {cumulative_length / 1000:.2f} km long.")
+
+lambert_conic = '+proj=lcc +lat_0=30 +lat_1=30 +lon_0=-100 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
 # project border
 border_series = GeoSeries(border, crs=world.crs).to_crs(lambert_conic)
@@ -139,7 +137,8 @@ mex.to_crs(lambert_conic).plot(
     edgecolor = '#ff7f00',
     linewidth = 0.5,
     )
-border_series.plot(     # note that this has already been projected above!
+border_series.plot(     
+# note that this has already been projected above!
     ax = my_ax,
     color = '#984ea3',
     linewidth = 2,
@@ -153,3 +152,14 @@ graticule.to_crs(lambert_conic).plot(
 # save the result
 savefig('out/2.png', bbox_inches='tight')
 print("done!")
+
+# add north arrow
+x, y, arrow_length = 0.98, 0.99, 0.1
+my_ax.annotate('N', xy=(x, y), xytext=(x, y-arrow_length),
+	arrowprops=dict(facecolor='black', width=5, headwidth=15),
+	ha='center', va='center', fontsize=20, xycoords=my_ax.transAxes)
+
+from matplotlib_scalebar.scalebar import ScaleBar
+
+# add scalebar
+my_ax.add_artist(ScaleBar(dx=1, units="m", location="lower left", length_fraction=0.25))
