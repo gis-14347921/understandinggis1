@@ -56,3 +56,33 @@ print(f"Potential wells: {len(possible_matches.index)}")
 precise_matches = possible_matches.loc[possible_matches.within(polygon)]
 
 print(f"Filtered wells: {len(precise_matches.index)}")
+
+# rebuild the spatial index using the new, smaller dataset
+geoms = precise_matches.geometry.to_list()
+idx = STRtree(geoms)
+
+from shapely.strtree import STRtree
+
+idx = STRtree(water_points.geometry)
+
+distances = []
+
+# loop through each population point
+for id, house in pop_points.iterrows():
+
+    # loop through each population point
+    nearest_well_index = idx.nearest(house.geometry)
+
+    # use the spatial index to get the closest well object from the original dataset
+    nearest_well_geom = water_points.iloc[nearest_well_index].geometry
+ 
+    nearest_point = nearest_well_geom.geoms[0]
+
+    # store the distance to the nearest well
+    distances.append(
+       distance(house.geometry.x, house.geometry.y,
+                nearest_point.x, nearest_point.y)
+   )
+    
+print("Number of distances calculated:", len(distances))
+
