@@ -110,9 +110,9 @@ title("Distance to Nearest Well, Gulu District, Uganda")
 # add the district boundary
 gulu_district.plot(
     ax = my_ax,
-    color = (0, 0, 0, 0),	# this is (red, green, blue, alpha) and means black, but transparent (alpha=0)
+    color = (0, 0, 0, 0),
     linewidth = 1,
-	edgecolor = 'black',		# this is just a shortcut for (0, 0, 0, 1)
+	edgecolor = 'black',		
     )
 
 # plot the locations, coloured by distance to water
@@ -142,3 +142,38 @@ my_ax.add_artist(ScaleBar(dx=1, units="m", location="lower left", length_fractio
 # save the result
 savefig('out/3.png', bbox_inches='tight')
 print("done!")
+
+precise_matches = water_points.loc[water_points.within(polygon)]
+# initialise an instance of an rtree Index object
+
+print(f"Initial wells: {len(water_points.index)}")
+print(f"Potential wells: {len(possible_matches.index)}")
+print(f"Filtered wells: {len(precise_matches.index)}")
+
+# ensure that the spatial index has been constructed
+water_points.sindex
+
+# report how many wells there are before the operation
+print(f"Initial wells: {len(water_points)}")
+
+# get the indexes of wells within the district polygon
+precise_matches = water_points.loc[water_points.within(polygon)]
+
+# report how many wells there are after the operation
+print(f"Filtered wells: {len(water_points)}")
+
+_, distances = precise_matches.sindex.nearest(pop_points.geometry, return_all=False, return_distance=True)
+
+# origin：
+distances = []
+for id, house in pop_points.iterrows():
+    nearest_well_index = idx.nearest(house.geometry)
+    nearest_well = precise_matches.iloc[nearest_well_index].geometry.geoms[0]
+    distances.append(distance(house.geometry.x, house.geometry.y, nearest_well.x, nearest_well.y))
+
+# optimization：
+nearest_indices, distances = precise_matches.sindex.nearest(
+    pop_points.geometry, 
+    return_all=False, 
+    return_distance=True
+)
